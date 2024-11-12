@@ -1,0 +1,6 @@
+@Eduvista.WebAPI_HostAddress = http://localhost:5293
+
+GET {{Eduvista.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
