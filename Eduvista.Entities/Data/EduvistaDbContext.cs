@@ -15,6 +15,5 @@ public class EduvistaDbContext : IdentityDbContext<CustomIdentityUser>
     public virtual DbSet<Parent> Parents { get; set; }
     public virtual DbSet<Student> Students { get; set; }
     public virtual DbSet<Teacher> Teachers { get; set; }
-
-    
+    public virtual DbSet<Subject> Subjects { get; set; }   
 }

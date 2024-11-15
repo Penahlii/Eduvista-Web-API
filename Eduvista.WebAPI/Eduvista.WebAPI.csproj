@@ -23,10 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Eduvista.Business\Eduvista.Business.csproj" />
     <ProjectReference Include="..\Eduvista.Core\Eduvista.Core.csproj" />
     <ProjectReference Include="..\Eduvista.DataAccess\Eduvista.DataAccess.csproj" />

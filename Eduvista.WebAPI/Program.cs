@@ -4,8 +4,11 @@ using Eduvista.DataAccess.Abstraction;
 using Eduvista.DataAccess.Concrete.EFEntityFramework;
 using Eduvista.Entities.Data;
 using Eduvista.Entities.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +36,27 @@ builder.Services.AddIdentity<CustomIdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<EduvistaDbContext>()
     .AddDefaultTokenProviders();
 
+// Add Authentication for JWT Token
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
+
 // Add Data Accesses
 
 builder.Services.AddScoped<IAdminDA, EFAdminDA>();
@@ -42,6 +66,7 @@ builder.Services.AddScoped<IClassRoutineDA, EFClassRoutineDA>();
 builder.Services.AddScoped<IParentDA, EFParentDA>();
 builder.Services.AddScoped<IStudentDA, EFStudentDA>();
 builder.Services.AddScoped<ITeacherDA, EFTeacherDA>();
+builder.Services.AddScoped<ISubjectDA, EFSubjectDA>();
 
 // Add Services
 
@@ -52,6 +77,7 @@ builder.Services.AddScoped<IClassService, ClassService>();
 builder.Services.AddScoped<IParentService, ParentService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<ITeacherService, TeacherService>();
+builder.Services.AddScoped<ISubjectService, SubjectService>();
 
 var app = builder.Build();
 
@@ -64,6 +90,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

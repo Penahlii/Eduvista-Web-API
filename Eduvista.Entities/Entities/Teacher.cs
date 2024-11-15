@@ -7,13 +7,12 @@ public class Teacher : IEntity
 {
     public int Id { get; set; }
     public DateTime DateOfJoining { get; set; }
-    public string Subject { get; set; }
+    public Subject Subject { get; set; }
     public Gender Gender { get; set; }
-    public string BloodGroup { get; set; }
     public DateTime DateOfBirth { get; set; }
     public string Address { get; set; }
-    public string PanNumber { get; set; }
-    public string Status { get; set; }
+    public string? PanNumber { get; set; }
+    public bool Status { get; set; }
     public CustomIdentityUser? User { get; set; }
 
     // Relationships

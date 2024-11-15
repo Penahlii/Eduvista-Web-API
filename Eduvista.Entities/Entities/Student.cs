@@ -8,11 +8,9 @@ public class Student : IEntity
     public int Id { get; set; }
     public string AdmissionNumber { get; set; }
     public DateTime AdmissionDate { get; set; }
-    public string Status { get; set; }
-    public string ClassName { get; set; }
+    public bool Status { get; set; }
     public Gender Gender { get; set; }
     public DateTime DateOfBirth { get; set; }
-    public string BloodGroup { get; set; }
     public string Sector { get; set; }
     public string CurrentAddress { get; set; }
     public CustomIdentityUser? User { get; set; }

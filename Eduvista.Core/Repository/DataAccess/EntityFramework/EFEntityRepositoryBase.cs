@@ -48,4 +48,9 @@ public class EFEntityRepositoryBase<TEntity, TContext>
         updatedEntity.State = EntityState.Modified;
         await _context.SaveChangesAsync();
     }
+
+    protected DbSet<TEntity> GetDbSet()
+    {
+        return _context.Set<TEntity>();
+    }
 }
