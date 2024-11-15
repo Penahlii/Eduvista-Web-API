@@ -10,4 +10,5 @@ public interface ITeacherService
     Task AddAsync(Teacher teacher);
     Task DeleteAsync(Teacher teacher);
     Task UpdateAsync(Teacher teacher);
+    Task<Teacher> GetByUser(string id);
 }

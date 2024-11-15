@@ -116,8 +116,53 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("TeacherSignIn")]
+    public async Task<IActionResult> TeacherSignIn([FromBody] SignInTeacherDTO model)
+    {
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        var teacher = await _teacherService.GetByUser(user.Id);
 
-    //////////////////////////////////////////////////
+        if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+        {
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var authClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+            };
+
+            foreach (var role in userRoles)
+                authClaims.Add(new Claim(ClaimTypes.Role, role));
+
+            var token = GenerateJwtToken(authClaims);
+
+            var response = new
+            {
+                token = token,
+                user = new
+                {
+                    id = user.Id,
+                    firstName = user.FirstName,
+                    lastName = user.LastName,
+                    email = user.Email,
+                    teacherDetails = new
+                    {
+                        id = teacher.Id,
+                        dateOfJoining = teacher.DateOfJoining,
+                        subject = teacher.Subject,
+                        gender = teacher.Gender,
+                        dateOfBirth = teacher.DateOfBirth,
+                        address = teacher.Address,
+                        status = teacher.Status,
+                    }
+                }
+            };
+
+            return Ok(response);
+        }
+
+        return Unauthorized();
+    }
 
 
     private JwtSecurityToken GenerateJwtToken(List<Claim> authClaims)

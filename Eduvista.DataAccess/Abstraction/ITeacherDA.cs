@@ -5,4 +5,5 @@ namespace Eduvista.DataAccess.Abstraction;
 
 public interface ITeacherDA : IEntityRepository<Teacher>
 {
+    Task<Teacher> GetByUser(string id);
 }
