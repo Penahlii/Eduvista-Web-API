@@ -10,4 +10,5 @@ public interface IStudentService
     Task AddAsync(Student student);
     Task DeleteAsync(Student student);
     Task UpdateAsync(Student student);
+    Task<Student> GetByUser(string id);
 }

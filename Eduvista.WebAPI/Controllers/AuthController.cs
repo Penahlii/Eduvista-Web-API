@@ -154,6 +154,24 @@ public class AuthController : ControllerBase
                         dateOfBirth = teacher.DateOfBirth,
                         address = teacher.Address,
                         status = teacher.Status,
+                        classRoutines = teacher.ClassRoutines.Select(cr => new
+                        {
+                            cr.Id,
+                            cr.Section,
+                            cr.Day,
+                            cr.StartTime,
+                            cr.EndTime,
+                            cr.Status
+                        }).ToList(),
+                        classes = teacher.Classes.Select(cs => new
+                        {
+                            cs.Id,
+                            cs.Name,
+                            cs.Section,
+                            cs.NoOfStudents,
+                            cs.NoOfSubjects,
+                            cs.Status,
+                        }).ToList()
                     }
                 }
             };
@@ -164,6 +182,66 @@ public class AuthController : ControllerBase
         return Unauthorized();
     }
 
+
+    [HttpPost("StudentSignIn")]
+    public async Task<IActionResult> StudentSignIn([FromBody] SignInStudentDTO model)
+    {
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        var student = await _studentService.GetByUser(user.Id);
+
+        if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+        {
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var authClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+            };
+
+            foreach (var role in userRoles)
+                authClaims.Add(new Claim(ClaimTypes.Role, role));
+
+            var token = GenerateJwtToken(authClaims);
+
+            var response = new
+            {
+                token = token,
+                user = new
+                {
+                    id = user.Id,
+                    firstName = user.FirstName,
+                    lastName = user.LastName,
+                    email = user.Email,
+                    studentDetails = new
+                    {
+                        id = student.Id,
+                        admissionNumber = student.AdmissionNumber,
+                        admissionDate = student.AdmissionDate,
+                        status = student.Status,
+                        gender = student.Gender,
+                        dateOfBirth = student.DateOfBirth,
+                        sector = student.Sector,
+                        currentAddress = student.CurrentAddress,
+                        classId = student.ClassId,
+                        classSelf = student.Class,
+                        parents = student.Parents.Select(pr => new
+                        {
+                            pr.Id,
+                            pr.FirstName,
+                            pr.LastName,
+                            pr.Email,
+                            pr.PhoneNumber
+                        }).ToList()
+                    }
+                }
+            };
+
+            return Ok(response);
+        }
+
+        return Unauthorized();
+    }
 
     private JwtSecurityToken GenerateJwtToken(List<Claim> authClaims)
     {

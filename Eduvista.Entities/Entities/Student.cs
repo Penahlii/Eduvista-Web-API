@@ -1,5 +1,6 @@
 ﻿using Eduvista.Core.Repository.Abstraction;
 using Eduvista.Entities.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Eduvista.Entities.Entities;
 
@@ -11,7 +12,8 @@ public class Student : IEntity
     public bool Status { get; set; }
     public Gender Gender { get; set; }
     public DateTime DateOfBirth { get; set; }
-    public string Sector { get; set; }
+    [AllowNull]
+    public string? Sector { get; set; }
     public string CurrentAddress { get; set; }
     public CustomIdentityUser? User { get; set; }
 

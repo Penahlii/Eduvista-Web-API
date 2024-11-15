@@ -34,6 +34,11 @@ public class StudentService : IStudentService
         return await _studentDA.Get(s => s.Id == id);
     }
 
+    public async Task<Student> GetByUser(string id)
+    {
+        return await _studentDA.GetByUser(id);
+    }
+
     public async Task UpdateAsync(Student student)
     {
         await _studentDA.Update(student);
