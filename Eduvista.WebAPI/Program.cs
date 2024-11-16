@@ -4,6 +4,7 @@ using Eduvista.DataAccess.Abstraction;
 using Eduvista.DataAccess.Concrete.EFEntityFramework;
 using Eduvista.Entities.Data;
 using Eduvista.Entities.Entities;
+using Eduvista.WebAPI.AutoMappers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,25 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins("http://localhost:3001/") // Add allowed origins
+              .AllowAnyMethod() // Allow all HTTP methods (GET, POST, etc.)
+              .AllowAnyHeader() // Allow all headers
+              .AllowCredentials(); // Allow credentials if needed
+    });
+
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin() // Allow all origins
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 
 // Add services to the container.
 
@@ -78,6 +98,11 @@ builder.Services.AddScoped<IParentService, ParentService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<ITeacherService, TeacherService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
+
+
+// Adding AutoMapper
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 
